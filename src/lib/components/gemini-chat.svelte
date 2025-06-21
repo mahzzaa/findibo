@@ -1,8 +1,12 @@
-<script>
+<script context="module" lang="ts">
+</script>
+
+<script lang="ts">
+	import { onMount } from 'svelte';
+
 	let mood = '';
 	let lastBook = '';
 	let language = '';
-	let responseText = '';
 	let loading = false;
 	let book = '';
 	let description = '';
@@ -10,12 +14,12 @@
 	let genre = '';
 	let rating = '';
 	let ageRange = '';
-	let reason = ''; // Add a new variable to store the explanation
+	let reason = '';
+	let isbn = '';
 
 	async function askModel() {
 		loading = true;
-		responseText = '';
-		book = description = author = genre = rating = ageRange = reason = ''; // Reset reason
+		book = description = author = genre = rating = ageRange = reason = isbn = '';
 
 		const res = await fetch('/api/gemini', {
 			method: 'POST',
@@ -32,6 +36,7 @@ You are Findibo, an expert book assistant. When asked for a recommendation, resp
 • Rating: [X.X]/5
 • Age Range: [number+]
 • Reason: [short explanation why this book is suggested]
+• ISBN: [ISBN of the book]
 
 User's Mood: ${mood}
 Last Book Enjoyed: ${lastBook}
@@ -44,9 +49,7 @@ Assistant:
 		const data = await res.json();
 		const result = data.result;
 
-		// Parse the response into structured fields
-		const lines = result.split('\n');
-		lines.forEach((line) => {
+		result.split('\n').forEach((line) => {
 			if (line.startsWith('• Book:')) book = line.replace('• Book: ', '').trim();
 			else if (line.startsWith('• Description:'))
 				description = line.replace('• Description: ', '').trim();
@@ -54,7 +57,8 @@ Assistant:
 			else if (line.startsWith('• Genre:')) genre = line.replace('• Genre: ', '').trim();
 			else if (line.startsWith('• Rating:')) rating = line.replace('• Rating: ', '').trim();
 			else if (line.startsWith('• Age Range:')) ageRange = line.replace('• Age Range: ', '').trim();
-			else if (line.startsWith('• Reason:')) reason = line.replace('• Reason: ', '').trim(); // Parse reason
+			else if (line.startsWith('• Reason:')) reason = line.replace('• Reason: ', '').trim();
+			else if (line.startsWith('• ISBN:')) isbn = line.replace('• ISBN: ', '').trim();
 		});
 
 		loading = false;
@@ -66,13 +70,11 @@ Assistant:
 
 	<textarea bind:value={mood} placeholder="What is your mood?" class="mb-2 w-65 rounded border p-2"
 	></textarea>
-
 	<textarea
 		bind:value={lastBook}
 		placeholder="What is the name of the last book you've read and enjoyed?"
 		class="mb-2 w-65 rounded border p-2"
 	></textarea>
-
 	<textarea
 		bind:value={language}
 		placeholder="Which language should the book be in?"
@@ -89,7 +91,7 @@ Assistant:
 
 	{#if book || description || author || genre || rating || ageRange || reason}
 		<div
-			class="absolute top-20 -right-[1050px] h-4/5 w-96 overflow-y-scroll rounded bg-gray-100 p-3"
+			class="scroll-container absolute top-20 -right-[1050px] h-4/5 w-96 rounded bg-gray-100 p-3"
 		>
 			<strong>Response:</strong>
 			<ul class="mt-2 space-y-2">
@@ -104,3 +106,10 @@ Assistant:
 		</div>
 	{/if}
 </div>
+
+<style>
+	.scroll-container {
+		overflow-y: scroll;
+		scrollbar-gutter: stable;
+	}
+</style>
