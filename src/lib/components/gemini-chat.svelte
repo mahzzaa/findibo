@@ -7,20 +7,21 @@
 	let gender = '';
 	let age = '';
 	let selectedGenres = [];
+	let preferredLanguage = '';
 	let recentBooks = ['', '', ''];
 	let bookAuthors = ['', '', ''];
 	let searchingBooks = [false, false, false];
 	let loading = false;
 	let showTooltip = false;
 	let tooltipPosition = { x: 0, y: 0 };
-	let book = '';
-	let description = '';
-	let author = '';
-	let genre = '';
-	let rating = '';
-	let ageRange = '';
-	let reason = '';
-	let isbn = '';
+	export let book = '';
+	export let description = '';
+	export let author = '';
+	export let genre = '';
+	export let rating = '';
+	export let ageRange = '';
+	export let reason = '';
+	export let isbn = '';
 
 	let searchTimeout;
 
@@ -90,7 +91,7 @@ Author (respond with just the name, no extra text):`
 	}
 
 	function showDisabledTooltip(event) {
-		if (loading || !gender || !age || selectedGenres.length === 0 || !recentBooks[0].trim()) {
+		if (loading || !gender || !age || !preferredLanguage || selectedGenres.length === 0 || !recentBooks[0].trim()) {
 			showTooltip = true;
 			handleMouseMove(event);
 		}
@@ -136,12 +137,13 @@ Use this format:
 User Profile:
 - Gender: ${gender}
 - Age: ${age}
+- Preferred Language: ${preferredLanguage}
 - Favorite Genres: ${selectedGenres.join(', ')}
 - Recent Books They Loved: ${recentBooks.map((book, i) => 
 	book.trim() !== '' ? `${book}${bookAuthors[i] ? ' by ' + bookAuthors[i] : ''}` : ''
 ).filter(book => book !== '').join('; ')}
 
-Please suggest a book from ANY language/country that closely matches their favorite genres and is similar in style/theme to their recently enjoyed books. Don't limit yourself to English books - explore world literature!
+IMPORTANT: Please suggest a book SPECIFICALLY in ${preferredLanguage} language. The recommendation must be in the user's preferred language (${preferredLanguage}). If the book is originally in another language but has been translated to ${preferredLanguage}, mention both the original language and that it's available in ${preferredLanguage}. Focus on books that are either originally written in ${preferredLanguage} or widely available in ${preferredLanguage} translation.
 Assistant:
 `
 			})
@@ -169,13 +171,13 @@ Assistant:
 	}
 </script>
 
-<div class="h-screen w-full max-w-md mx-auto p-6 pt-24 overflow-y-auto flex flex-col">
+<div class="h-screen w-full max-w-md p-6 pt-24 overflow-y-auto flex flex-col">
 
 	<div class="flex-1 space-y-4 overflow-y-auto custom-scrollbar">
 	<div class="mb-4">
-		<label class="block text-xs font-medium text-cyan-300 mb-1 tracking-wide">◦ GENDER IDENTITY</label>
+		<label class="block text-xs font-medium text-cyan-300 mb-1 tracking-wide">GENDER IDENTITY</label>
 		<select bind:value={gender} class="w-full bg-gray-900/50 backdrop-blur-sm border border-cyan-500/30 rounded-xl p-3 text-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 focus:outline-none transition-all duration-300 hover:border-cyan-400/50">
-			<option value="" class="bg-gray-800 text-gray-300">▸ Select your gender</option>
+			<option value="" class="bg-gray-800 text-gray-300">Select your gender</option>
 			<option value="female" class="bg-gray-800 text-white">♀ Female</option>
 			<option value="male" class="bg-gray-800 text-white">♂ Male</option>
 			<option value="non-binary" class="bg-gray-800 text-white">⚬ Non-binary</option>
@@ -184,11 +186,11 @@ Assistant:
 	</div>
 
 	<div class="mb-4">
-		<label class="block text-xs font-medium text-cyan-300 mb-1 tracking-wide">◦ AGE RANGE</label>
+		<label class="block text-xs font-medium text-cyan-300 mb-1 tracking-wide">AGE RANGE</label>
 		<input
 			bind:value={age}
 			type="number"
-			placeholder="▸ Enter your age"
+			placeholder="Enter your age"
 			class="w-full bg-gray-900/50 backdrop-blur-sm border border-cyan-500/30 rounded-xl p-3 text-white placeholder-gray-400 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 focus:outline-none transition-all duration-300 hover:border-cyan-400/50"
 			min="1"
 			max="120"
@@ -196,7 +198,34 @@ Assistant:
 	</div>
 
 	<div class="mb-4">
-		<label class="block text-xs font-medium text-cyan-300 mb-1 tracking-wide">◦ FAVORITE GENRES</label>
+		<label class="block text-xs font-medium text-cyan-300 mb-1 tracking-wide">PREFERRED LANGUAGE</label>
+		<select bind:value={preferredLanguage} class="w-full bg-gray-900/50 backdrop-blur-sm border border-cyan-500/30 rounded-xl p-3 text-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 focus:outline-none transition-all duration-300 hover:border-cyan-400/50">
+			<option value="" class="bg-gray-800 text-gray-300">Select book language</option>
+			<option value="English" class="bg-gray-800 text-white">🇺🇸 English</option>
+			<option value="Persian/Farsi" class="bg-gray-800 text-white">🇮🇷 Persian/Farsi</option>
+			<option value="Turkish" class="bg-gray-800 text-white">🇹🇷 Turkish</option>
+			<option value="Arabic" class="bg-gray-800 text-white">🇸🇦 Arabic</option>
+			<option value="Spanish" class="bg-gray-800 text-white">🇪🇸 Spanish</option>
+			<option value="French" class="bg-gray-800 text-white">🇫🇷 French</option>
+			<option value="German" class="bg-gray-800 text-white">🇩🇪 German</option>
+			<option value="Italian" class="bg-gray-800 text-white">🇮🇹 Italian</option>
+			<option value="Portuguese" class="bg-gray-800 text-white">🇵🇹 Portuguese</option>
+			<option value="Russian" class="bg-gray-800 text-white">🇷🇺 Russian</option>
+			<option value="Chinese" class="bg-gray-800 text-white">🇨🇳 Chinese</option>
+			<option value="Japanese" class="bg-gray-800 text-white">🇯🇵 Japanese</option>
+			<option value="Korean" class="bg-gray-800 text-white">🇰🇷 Korean</option>
+			<option value="Hindi" class="bg-gray-800 text-white">🇮🇳 Hindi</option>
+			<option value="Dutch" class="bg-gray-800 text-white">🇳🇱 Dutch</option>
+			<option value="Swedish" class="bg-gray-800 text-white">🇸🇪 Swedish</option>
+			<option value="Norwegian" class="bg-gray-800 text-white">🇳🇴 Norwegian</option>
+			<option value="Polish" class="bg-gray-800 text-white">🇵🇱 Polish</option>
+			<option value="Czech" class="bg-gray-800 text-white">🇨🇿 Czech</option>
+			<option value="Hebrew" class="bg-gray-800 text-white">🇮🇱 Hebrew</option>
+		</select>
+	</div>
+
+	<div class="mb-4">
+		<label class="block text-xs font-medium text-cyan-300 mb-1 tracking-wide">FAVORITE GENRES</label>
 		<div class="bg-gray-900/30 backdrop-blur-sm border border-cyan-500/30 rounded-xl p-3 max-h-32 overflow-y-auto custom-scrollbar">
 			<div class="grid grid-cols-1 gap-2">
 			<label class="flex items-center space-x-2 p-1 rounded-lg hover:bg-cyan-500/10 transition-colors duration-200 cursor-pointer group">
@@ -260,16 +289,16 @@ Assistant:
 	</div>
 
 	<div class="mb-4">
-		<label class="block text-xs font-medium text-cyan-300 mb-1 tracking-wide">◦ RECENT FAVORITES</label>
+		<label class="block text-xs font-medium text-cyan-300 mb-1 tracking-wide">▎RECENT FAVORITES</label>
 		<div class="space-y-3">
 			<div>
-				<label class="block text-xs text-gray-400 mb-1">● BOOK #1 (REQUIRED)</label>
+				<label class="block text-xs text-gray-400 mb-1">BOOK #1 (REQUIRED)</label>
 				<div class="relative">
 					<input
 						on:input={(e) => handleBookInput(e, 0)}
 						value={recentBooks[0]}
 						type="text"
-						placeholder="▸ Enter title (صد سال تنهایی, Kara Kitap, 1984...)"
+						placeholder="Enter title (صد سال تنهایی, Kara Kitap, 1984...)"
 						class="w-full bg-gray-900/50 backdrop-blur-sm border border-cyan-500/30 rounded-xl p-3 pr-20 text-white placeholder-gray-500 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 focus:outline-none transition-all duration-300 hover:border-cyan-400/50"
 					/>
 					<div class="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center">
@@ -287,13 +316,13 @@ Assistant:
 				</div>
 			</div>
 			<div>
-				<label class="block text-xs text-gray-400 mb-1">● BOOK #2 (OPTIONAL)</label>
+				<label class="block text-xs text-gray-400 mb-1">BOOK #2 (OPTIONAL)</label>
 				<div class="relative">
 					<input
 						on:input={(e) => handleBookInput(e, 1)}
 						value={recentBooks[1]}
 						type="text"
-						placeholder="▸ Enter title in any language"
+						placeholder="Enter title in any language"
 						class="w-full bg-gray-900/50 backdrop-blur-sm border border-cyan-500/30 rounded-xl p-3 pr-20 text-white placeholder-gray-500 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 focus:outline-none transition-all duration-300 hover:border-cyan-400/50"
 					/>
 					<div class="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center">
@@ -311,13 +340,13 @@ Assistant:
 				</div>
 			</div>
 			<div>
-				<label class="block text-xs text-gray-400 mb-1">● BOOK #3 (OPTIONAL)</label>
+				<label class="block text-xs text-gray-400 mb-1">BOOK #3 (OPTIONAL)</label>
 				<div class="relative">
 					<input
 						on:input={(e) => handleBookInput(e, 2)}
 						value={recentBooks[2]}
 						type="text"
-						placeholder="▸ Enter title in any language"
+						placeholder="Enter title in any language"
 						class="w-full bg-gray-900/50 backdrop-blur-sm border border-cyan-500/30 rounded-xl p-3 pr-20 text-white placeholder-gray-500 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 focus:outline-none transition-all duration-300 hover:border-cyan-400/50"
 					/>
 					<div class="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center">
@@ -345,7 +374,7 @@ Assistant:
 			on:mousemove={handleMouseMove}
 			on:mouseleave={hideTooltip}
 			class="w-full bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 hover:from-cyan-600 hover:via-blue-700 hover:to-purple-700 disabled:from-gray-600 disabled:via-gray-700 disabled:to-gray-800 rounded-xl px-6 py-3 text-white font-bold text-sm tracking-wide transition-all duration-500 transform hover:scale-[1.05] hover:-rotate-1 hover:shadow-2xl hover:shadow-cyan-500/40 disabled:scale-100 disabled:rotate-0 shadow-lg perspective-1000 discover-btn"
-			disabled={loading || !gender || !age || selectedGenres.length === 0 || !recentBooks[0].trim()}
+			disabled={loading || !gender || !age || !preferredLanguage || selectedGenres.length === 0 || !recentBooks[0].trim()}
 		>
 			{#if loading}
 				<div class="flex items-center justify-center space-x-2">
@@ -362,69 +391,6 @@ Assistant:
 		</button>
 	</div>
 
-	{#if book || description || author || genre || rating || ageRange || reason}
-		<div class="flex-shrink-0 mt-4 w-full bg-gradient-to-br from-gray-900/80 via-gray-800/80 to-gray-900/80 backdrop-blur-sm border border-cyan-500/30 rounded-2xl p-4 shadow-2xl shadow-cyan-500/10">
-			<div class="mb-4 pb-3 border-b border-cyan-500/30">
-				<h3 class="text-xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent flex items-center">
-					<span class="mr-2">🎯</span>
-					YOUR PERFECT MATCH
-				</h3>
-			</div>
-			<div class="space-y-4">
-				{#if book}
-					<div class="bg-gradient-to-r from-cyan-500/20 to-blue-500/20 backdrop-blur-sm p-4 rounded-xl border border-cyan-400/30">
-						<div class="text-xs text-cyan-300 mb-1 tracking-wider">◦ BOOK TITLE</div>
-						<div class="text-lg font-bold text-white">{book}</div>
-					</div>
-				{/if}
-				{#if author}
-					<div class="flex items-center space-x-3">
-						<div class="text-sm text-gray-300">✦ AUTHOR:</div>
-						<span class="text-cyan-300 font-medium">{author}</span>
-					</div>
-				{/if}
-				{#if description}
-					<div class="bg-gray-800/50 p-4 rounded-xl border border-gray-600/30">
-						<div class="text-xs text-gray-400 mb-2 tracking-wider">◦ DESCRIPTION</div>
-						<p class="text-gray-200 text-sm leading-relaxed">{description}</p>
-					</div>
-				{/if}
-				{#if genre}
-					<div class="flex items-center space-x-3">
-						<div class="text-sm text-gray-300">✦ ORIGIN & GENRE:</div>
-						<span class="bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 text-emerald-300 px-3 py-1 rounded-full text-sm border border-emerald-500/30">{genre}</span>
-					</div>
-				{/if}
-				{#if rating}
-					<div class="flex items-center space-x-3">
-						<div class="text-sm text-gray-300">✦ RATING:</div>
-						<span class="text-yellow-400 font-bold flex items-center">
-							<span class="mr-1">⭐</span>
-							{rating}
-						</span>
-					</div>
-				{/if}
-				{#if ageRange}
-					<div class="flex items-center space-x-3">
-						<div class="text-sm text-gray-300">✦ AGE RANGE:</div>
-						<span class="text-purple-300">{ageRange}</span>
-					</div>
-				{/if}
-				{#if reason}
-					<div class="bg-gradient-to-r from-purple-500/10 to-pink-500/10 p-4 rounded-xl border border-purple-400/20">
-						<div class="text-xs text-purple-300 mb-2 tracking-wider">◦ AI RECOMMENDATION REASON</div>
-						<p class="text-gray-200 text-sm leading-relaxed">{reason}</p>
-					</div>
-				{/if}
-				{#if isbn}
-					<div class="text-xs text-gray-500 border-t border-gray-600/30 pt-3 text-center">
-						<span class="text-gray-400">ISBN:</span> 
-						<span class="text-cyan-400 font-mono">{isbn}</span>
-					</div>
-				{/if}
-			</div>
-		</div>
-	{/if}
 
 	<!-- Tooltip for disabled button -->
 	{#if showTooltip}

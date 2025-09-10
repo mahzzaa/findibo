@@ -1,6 +1,16 @@
 <script>
 	import GeminiChat from '$lib/components/gemini-chat.svelte';
+	import BookResults from '$lib/components/book-results.svelte';
 	import Spline_3D from '$lib/components/spline-3D.svelte';
+
+	let book = '';
+	let description = '';
+	let author = '';
+	let genre = '';
+	let rating = '';
+	let ageRange = '';
+	let reason = '';
+	let isbn = '';
 </script>
 
 <Spline_3D />
@@ -17,6 +27,11 @@
 </div>
 
 <!-- Form Section - Left Side -->
-<div class="absolute top-0 left-0 z-10">
-	<GeminiChat />
+<div class="absolute top-0 left-0 z-10 w-1/2">
+	<GeminiChat bind:book bind:description bind:author bind:genre bind:rating bind:ageRange bind:reason bind:isbn />
+</div>
+
+<!-- Results Section - Right Side -->
+<div class="absolute top-0 right-0 z-10 w-1/2">
+	<BookResults {book} {description} {author} {genre} {rating} {ageRange} {reason} {isbn} />
 </div>
