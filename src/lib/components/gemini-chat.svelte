@@ -11,6 +11,8 @@
 	let bookAuthors = ['', '', ''];
 	let searchingBooks = [false, false, false];
 	let loading = false;
+	let showTooltip = false;
+	let tooltipPosition = { x: 0, y: 0 };
 	let book = '';
 	let description = '';
 	let author = '';
@@ -80,6 +82,22 @@ Author (respond with just the name, no extra text):`
 		const value = event.target.value;
 		recentBooks[index] = value;
 		debounceSearch(value, index);
+	}
+
+	function handleMouseMove(event) {
+		tooltipPosition.x = event.clientX;
+		tooltipPosition.y = event.clientY;
+	}
+
+	function showDisabledTooltip(event) {
+		if (loading || !gender || !age || selectedGenres.length === 0 || !recentBooks[0].trim()) {
+			showTooltip = true;
+			handleMouseMove(event);
+		}
+	}
+
+	function hideTooltip() {
+		showTooltip = false;
 	}
 
 	async function askModel() {
@@ -323,7 +341,10 @@ Assistant:
 	<div class="flex-shrink-0 mt-4">
 		<button
 			on:click={askModel}
-			class="w-full bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 hover:from-cyan-600 hover:via-blue-700 hover:to-purple-700 disabled:from-gray-600 disabled:via-gray-700 disabled:to-gray-800 rounded-xl px-6 py-3 text-white font-bold text-sm tracking-wide transition-all duration-300 transform hover:scale-[1.02] disabled:scale-100 shadow-lg hover:shadow-cyan-500/25"
+			on:mouseenter={showDisabledTooltip}
+			on:mousemove={handleMouseMove}
+			on:mouseleave={hideTooltip}
+			class="w-full bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 hover:from-cyan-600 hover:via-blue-700 hover:to-purple-700 disabled:from-gray-600 disabled:via-gray-700 disabled:to-gray-800 rounded-xl px-6 py-3 text-white font-bold text-sm tracking-wide transition-all duration-500 transform hover:scale-[1.05] hover:-rotate-1 hover:shadow-2xl hover:shadow-cyan-500/40 disabled:scale-100 disabled:rotate-0 shadow-lg perspective-1000 discover-btn"
 			disabled={loading || !gender || !age || selectedGenres.length === 0 || !recentBooks[0].trim()}
 		>
 			{#if loading}
@@ -404,6 +425,23 @@ Assistant:
 			</div>
 		</div>
 	{/if}
+
+	<!-- Tooltip for disabled button -->
+	{#if showTooltip}
+		<div 
+			class="fixed z-50 pointer-events-none"
+			style="left: {tooltipPosition.x + 15}px; top: {tooltipPosition.y - 10}px;"
+		>
+			<div class="bg-gradient-to-r from-red-500 to-pink-600 text-white text-xs font-bold px-3 py-2 rounded-lg shadow-2xl shadow-red-500/40 animate-pulse">
+				<div class="flex items-center space-x-1">
+					<span>⚠️</span>
+					<span>Fill the form first!</span>
+				</div>
+				<!-- Tooltip arrow -->
+				<div class="absolute -bottom-1 left-3 w-2 h-2 bg-gradient-to-r from-red-500 to-pink-600 transform rotate-45"></div>
+			</div>
+		</div>
+	{/if}
 </div>
 
 <style>
@@ -439,5 +477,30 @@ Assistant:
 	/* Custom button glow */
 	button:not(:disabled):hover {
 		box-shadow: 0 0 30px rgba(6, 182, 212, 0.4);
+	}
+
+	/* 3D Tilt Effect for Discover Button */
+	.discover-btn {
+		transform-style: preserve-3d;
+		perspective: 1000px;
+		transition: all 0.5s cubic-bezier(0.23, 1, 0.320, 1);
+	}
+
+	.discover-btn:hover {
+		transform: scale(1.05) rotateX(-8deg) rotateY(5deg) rotateZ(-1deg);
+		box-shadow: 
+			0 20px 40px rgba(6, 182, 212, 0.3),
+			0 0 60px rgba(6, 182, 212, 0.2),
+			inset 0 2px 10px rgba(255, 255, 255, 0.1);
+	}
+
+	.discover-btn:active {
+		transform: scale(0.98) rotateX(-2deg) rotateY(1deg);
+		transition: all 0.1s ease-out;
+	}
+
+	.discover-btn:disabled {
+		transform: none !important;
+		box-shadow: none !important;
 	}
 </style>
