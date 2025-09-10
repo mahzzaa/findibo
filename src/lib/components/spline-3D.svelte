@@ -26,8 +26,8 @@
 
 <spline-viewer
 	url="https://prod.spline.design/fm1c2d3WDUAWwbd8/scene.splinecode"
-	class="h-screen w-full"
-	style="display: {isLoading ? 'none' : 'block'}"
+	class="h-screen w-full fixed top-0 left-0 z-0 pointer-events-auto"
+	style="display: {isLoading ? 'none' : 'block'}; pointer-events: auto;"
 ></spline-viewer>
 
 <style>

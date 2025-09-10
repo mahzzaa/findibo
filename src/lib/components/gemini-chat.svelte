@@ -144,6 +144,8 @@ User Profile:
 ).filter(book => book !== '').join('; ')}
 
 IMPORTANT: Please suggest a book SPECIFICALLY in ${preferredLanguage} language. The recommendation must be in the user's preferred language (${preferredLanguage}). If the book is originally in another language but has been translated to ${preferredLanguage}, mention both the original language and that it's available in ${preferredLanguage}. Focus on books that are either originally written in ${preferredLanguage} or widely available in ${preferredLanguage} translation.
+
+CRITICAL EXCLUSION: When recommending Persian/Farsi books, NEVER suggest books related to: جنگ (war), شهید (martyrdom), دفاع مقدس (sacred defense), اسلام (Islam), دین (religion), or مرجع تقلید (religious authority). Focus on literature, fiction, poetry, philosophy, and other non-religious, non-war themed books.
 Assistant:
 `
 			})
@@ -171,12 +173,13 @@ Assistant:
 	}
 </script>
 
-<div class="h-screen w-full max-w-md p-6 pt-24 overflow-y-auto flex flex-col">
+<div class="h-screen w-full p-6 pt-24 overflow-y-auto flex flex-col pointer-events-none">
+	<div class="max-w-xs mr-auto pointer-events-auto flex flex-col h-full">
 
 	<div class="flex-1 space-y-4 overflow-y-auto custom-scrollbar">
 	<div class="mb-4">
 		<label class="block text-xs font-medium text-cyan-300 mb-1 tracking-wide">GENDER IDENTITY</label>
-		<select bind:value={gender} class="w-full bg-gray-900/50 backdrop-blur-sm border border-cyan-500/30 rounded-xl p-3 text-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 focus:outline-none transition-all duration-300 hover:border-cyan-400/50">
+		<select bind:value={gender} class="w-full neumorphic-select rounded-xl p-3 text-white focus:outline-none">
 			<option value="" class="bg-gray-800 text-gray-300">Select your gender</option>
 			<option value="female" class="bg-gray-800 text-white">♀ Female</option>
 			<option value="male" class="bg-gray-800 text-white">♂ Male</option>
@@ -191,7 +194,7 @@ Assistant:
 			bind:value={age}
 			type="number"
 			placeholder="Enter your age"
-			class="w-full bg-gray-900/50 backdrop-blur-sm border border-cyan-500/30 rounded-xl p-3 text-white placeholder-gray-400 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 focus:outline-none transition-all duration-300 hover:border-cyan-400/50"
+			class="w-full neumorphic-input rounded-xl p-3 text-white placeholder-gray-400 focus:outline-none"
 			min="1"
 			max="120"
 		/>
@@ -199,7 +202,7 @@ Assistant:
 
 	<div class="mb-4">
 		<label class="block text-xs font-medium text-cyan-300 mb-1 tracking-wide">PREFERRED LANGUAGE</label>
-		<select bind:value={preferredLanguage} class="w-full bg-gray-900/50 backdrop-blur-sm border border-cyan-500/30 rounded-xl p-3 text-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 focus:outline-none transition-all duration-300 hover:border-cyan-400/50">
+		<select bind:value={preferredLanguage} class="w-full neumorphic-select rounded-xl p-3 text-white focus:outline-none">
 			<option value="" class="bg-gray-800 text-gray-300">Select book language</option>
 			<option value="English" class="bg-gray-800 text-white">🇺🇸 English</option>
 			<option value="Persian/Farsi" class="bg-gray-800 text-white">🇮🇷 Persian/Farsi</option>
@@ -226,62 +229,62 @@ Assistant:
 
 	<div class="mb-4">
 		<label class="block text-xs font-medium text-cyan-300 mb-1 tracking-wide">FAVORITE GENRES</label>
-		<div class="bg-gray-900/30 backdrop-blur-sm border border-cyan-500/30 rounded-xl p-3 max-h-32 overflow-y-auto custom-scrollbar">
-			<div class="grid grid-cols-1 gap-2">
+		<div class="neumorphic-inset rounded-xl p-3 max-h-32 overflow-y-auto custom-scrollbar">
+			<div class="grid grid-cols-2 gap-2">
 			<label class="flex items-center space-x-2 p-1 rounded-lg hover:bg-cyan-500/10 transition-colors duration-200 cursor-pointer group">
-				<input type="checkbox" value="Fantasy" bind:group={selectedGenres} class="w-3 h-3 text-cyan-500 bg-gray-800 border-cyan-500/50 rounded focus:ring-cyan-500 focus:ring-1" />
+				<input type="checkbox" value="Fantasy" bind:group={selectedGenres} class="w-3 h-3 neumorphic-checkbox rounded focus:outline-none" />
 				<span class="text-xs text-gray-200 group-hover:text-cyan-300 transition-colors">🔮 Fantasy</span>
 			</label>
 			<label class="flex items-center space-x-2 p-1 rounded-lg hover:bg-cyan-500/10 transition-colors duration-200 cursor-pointer group">
-				<input type="checkbox" value="Romance" bind:group={selectedGenres} class="w-3 h-3 text-cyan-500 bg-gray-800 border-cyan-500/50 rounded focus:ring-cyan-500 focus:ring-1" />
+				<input type="checkbox" value="Romance" bind:group={selectedGenres} class="w-3 h-3 neumorphic-checkbox rounded focus:outline-none" />
 				<span class="text-xs text-gray-200 group-hover:text-cyan-300 transition-colors">💕 Romance</span>
 			</label>
 			<label class="flex items-center space-x-2 p-1 rounded-lg hover:bg-cyan-500/10 transition-colors duration-200 cursor-pointer group">
-				<input type="checkbox" value="Mystery" bind:group={selectedGenres} class="w-3 h-3 text-cyan-500 bg-gray-800 border-cyan-500/50 rounded focus:ring-cyan-500 focus:ring-1" />
+				<input type="checkbox" value="Mystery" bind:group={selectedGenres} class="w-3 h-3 neumorphic-checkbox rounded focus:outline-none" />
 				<span class="text-xs text-gray-200 group-hover:text-cyan-300 transition-colors">🕵️ Mystery</span>
 			</label>
 			<label class="flex items-center space-x-2 p-1 rounded-lg hover:bg-cyan-500/10 transition-colors duration-200 cursor-pointer group">
-				<input type="checkbox" value="Thriller" bind:group={selectedGenres} class="w-3 h-3 text-cyan-500 bg-gray-800 border-cyan-500/50 rounded focus:ring-cyan-500 focus:ring-1" />
+				<input type="checkbox" value="Thriller" bind:group={selectedGenres} class="w-3 h-3 neumorphic-checkbox rounded focus:outline-none" />
 				<span class="text-xs text-gray-200 group-hover:text-cyan-300 transition-colors">⚡ Thriller</span>
 			</label>
 			<label class="flex items-center space-x-2 p-1 rounded-lg hover:bg-cyan-500/10 transition-colors duration-200 cursor-pointer group">
-				<input type="checkbox" value="Science Fiction" bind:group={selectedGenres} class="w-3 h-3 text-cyan-500 bg-gray-800 border-cyan-500/50 rounded focus:ring-cyan-500 focus:ring-1" />
+				<input type="checkbox" value="Science Fiction" bind:group={selectedGenres} class="w-3 h-3 neumorphic-checkbox rounded focus:outline-none" />
 				<span class="text-xs text-gray-200 group-hover:text-cyan-300 transition-colors">🚀 Sci-Fi</span>
 			</label>
 			<label class="flex items-center space-x-2 p-1 rounded-lg hover:bg-cyan-500/10 transition-colors duration-200 cursor-pointer group">
-				<input type="checkbox" value="Historical Fiction" bind:group={selectedGenres} class="w-3 h-3 text-cyan-500 bg-gray-800 border-cyan-500/50 rounded focus:ring-cyan-500 focus:ring-1" />
+				<input type="checkbox" value="Historical Fiction" bind:group={selectedGenres} class="w-3 h-3 neumorphic-checkbox rounded focus:outline-none" />
 				<span class="text-xs text-gray-200 group-hover:text-cyan-300 transition-colors">🏛️ Historical</span>
 			</label>
 			<label class="flex items-center space-x-2 p-1 rounded-lg hover:bg-cyan-500/10 transition-colors duration-200 cursor-pointer group">
-				<input type="checkbox" value="Contemporary Fiction" bind:group={selectedGenres} class="w-3 h-3 text-cyan-500 bg-gray-800 border-cyan-500/50 rounded focus:ring-cyan-500 focus:ring-1" />
+				<input type="checkbox" value="Contemporary Fiction" bind:group={selectedGenres} class="w-3 h-3 neumorphic-checkbox rounded focus:outline-none" />
 				<span class="text-xs text-gray-200 group-hover:text-cyan-300 transition-colors">📖 Contemporary</span>
 			</label>
 			<label class="flex items-center space-x-2 p-1 rounded-lg hover:bg-cyan-500/10 transition-colors duration-200 cursor-pointer group">
-				<input type="checkbox" value="Literary Fiction" bind:group={selectedGenres} class="w-3 h-3 text-cyan-500 bg-gray-800 border-cyan-500/50 rounded focus:ring-cyan-500 focus:ring-1" />
+				<input type="checkbox" value="Literary Fiction" bind:group={selectedGenres} class="w-3 h-3 neumorphic-checkbox rounded focus:outline-none" />
 				<span class="text-xs text-gray-200 group-hover:text-cyan-300 transition-colors">✍️ Literary</span>
 			</label>
 			<label class="flex items-center space-x-2 p-1 rounded-lg hover:bg-cyan-500/10 transition-colors duration-200 cursor-pointer group">
-				<input type="checkbox" value="Young Adult" bind:group={selectedGenres} class="w-3 h-3 text-cyan-500 bg-gray-800 border-cyan-500/50 rounded focus:ring-cyan-500 focus:ring-1" />
+				<input type="checkbox" value="Young Adult" bind:group={selectedGenres} class="w-3 h-3 neumorphic-checkbox rounded focus:outline-none" />
 				<span class="text-xs text-gray-200 group-hover:text-cyan-300 transition-colors">🌟 Young Adult</span>
 			</label>
 			<label class="flex items-center space-x-2 p-1 rounded-lg hover:bg-cyan-500/10 transition-colors duration-200 cursor-pointer group">
-				<input type="checkbox" value="Non-Fiction" bind:group={selectedGenres} class="w-3 h-3 text-cyan-500 bg-gray-800 border-cyan-500/50 rounded focus:ring-cyan-500 focus:ring-1" />
+				<input type="checkbox" value="Non-Fiction" bind:group={selectedGenres} class="w-3 h-3 neumorphic-checkbox rounded focus:outline-none" />
 				<span class="text-xs text-gray-200 group-hover:text-cyan-300 transition-colors">📚 Non-Fiction</span>
 			</label>
 			<label class="flex items-center space-x-2 p-1 rounded-lg hover:bg-cyan-500/10 transition-colors duration-200 cursor-pointer group">
-				<input type="checkbox" value="Biography" bind:group={selectedGenres} class="w-3 h-3 text-cyan-500 bg-gray-800 border-cyan-500/50 rounded focus:ring-cyan-500 focus:ring-1" />
+				<input type="checkbox" value="Biography" bind:group={selectedGenres} class="w-3 h-3 neumorphic-checkbox rounded focus:outline-none" />
 				<span class="text-xs text-gray-200 group-hover:text-cyan-300 transition-colors">👤 Biography</span>
 			</label>
 			<label class="flex items-center space-x-2 p-1 rounded-lg hover:bg-cyan-500/10 transition-colors duration-200 cursor-pointer group">
-				<input type="checkbox" value="Self-Help" bind:group={selectedGenres} class="w-3 h-3 text-cyan-500 bg-gray-800 border-cyan-500/50 rounded focus:ring-cyan-500 focus:ring-1" />
+				<input type="checkbox" value="Self-Help" bind:group={selectedGenres} class="w-3 h-3 neumorphic-checkbox rounded focus:outline-none" />
 				<span class="text-xs text-gray-200 group-hover:text-cyan-300 transition-colors">🧠 Self-Help</span>
 			</label>
 			<label class="flex items-center space-x-2 p-1 rounded-lg hover:bg-cyan-500/10 transition-colors duration-200 cursor-pointer group">
-				<input type="checkbox" value="Horror" bind:group={selectedGenres} class="w-3 h-3 text-cyan-500 bg-gray-800 border-cyan-500/50 rounded focus:ring-cyan-500 focus:ring-1" />
+				<input type="checkbox" value="Horror" bind:group={selectedGenres} class="w-3 h-3 neumorphic-checkbox rounded focus:outline-none" />
 				<span class="text-xs text-gray-200 group-hover:text-cyan-300 transition-colors">👻 Horror</span>
 			</label>
 			<label class="flex items-center space-x-2 p-1 rounded-lg hover:bg-cyan-500/10 transition-colors duration-200 cursor-pointer group">
-				<input type="checkbox" value="Adventure" bind:group={selectedGenres} class="w-3 h-3 text-cyan-500 bg-gray-800 border-cyan-500/50 rounded focus:ring-cyan-500 focus:ring-1" />
+				<input type="checkbox" value="Adventure" bind:group={selectedGenres} class="w-3 h-3 neumorphic-checkbox rounded focus:outline-none" />
 				<span class="text-xs text-gray-200 group-hover:text-cyan-300 transition-colors">🗺️ Adventure</span>
 			</label>
 			</div>
@@ -299,7 +302,7 @@ Assistant:
 						value={recentBooks[0]}
 						type="text"
 						placeholder="Enter title (صد سال تنهایی, Kara Kitap, 1984...)"
-						class="w-full bg-gray-900/50 backdrop-blur-sm border border-cyan-500/30 rounded-xl p-3 pr-20 text-white placeholder-gray-500 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 focus:outline-none transition-all duration-300 hover:border-cyan-400/50"
+						class="w-full neumorphic-input rounded-xl p-3 pr-20 text-white placeholder-gray-400 focus:outline-none"
 					/>
 					<div class="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center">
 						{#if searchingBooks[0]}
@@ -323,7 +326,7 @@ Assistant:
 						value={recentBooks[1]}
 						type="text"
 						placeholder="Enter title in any language"
-						class="w-full bg-gray-900/50 backdrop-blur-sm border border-cyan-500/30 rounded-xl p-3 pr-20 text-white placeholder-gray-500 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 focus:outline-none transition-all duration-300 hover:border-cyan-400/50"
+						class="w-full neumorphic-input rounded-xl p-3 pr-20 text-white placeholder-gray-400 focus:outline-none"
 					/>
 					<div class="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center">
 						{#if searchingBooks[1]}
@@ -347,7 +350,7 @@ Assistant:
 						value={recentBooks[2]}
 						type="text"
 						placeholder="Enter title in any language"
-						class="w-full bg-gray-900/50 backdrop-blur-sm border border-cyan-500/30 rounded-xl p-3 pr-20 text-white placeholder-gray-500 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 focus:outline-none transition-all duration-300 hover:border-cyan-400/50"
+						class="w-full neumorphic-input rounded-xl p-3 pr-20 text-white placeholder-gray-400 focus:outline-none"
 					/>
 					<div class="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center">
 						{#if searchingBooks[2]}
@@ -373,7 +376,7 @@ Assistant:
 			on:mouseenter={showDisabledTooltip}
 			on:mousemove={handleMouseMove}
 			on:mouseleave={hideTooltip}
-			class="w-full bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 hover:from-cyan-600 hover:via-blue-700 hover:to-purple-700 disabled:from-gray-600 disabled:via-gray-700 disabled:to-gray-800 rounded-xl px-6 py-3 text-white font-bold text-sm tracking-wide transition-all duration-500 transform hover:scale-[1.05] hover:-rotate-1 hover:shadow-2xl hover:shadow-cyan-500/40 disabled:scale-100 disabled:rotate-0 shadow-lg perspective-1000 discover-btn"
+			class="w-full neumorphic-button rounded-xl px-6 py-3 text-white font-bold text-sm tracking-wide discover-btn {loading || !gender || !age || !preferredLanguage || selectedGenres.length === 0 || !recentBooks[0].trim() ? 'opacity-50 cursor-not-allowed' : ''}"
 			disabled={loading || !gender || !age || !preferredLanguage || selectedGenres.length === 0 || !recentBooks[0].trim()}
 		>
 			{#if loading}
@@ -408,6 +411,7 @@ Assistant:
 			</div>
 		</div>
 	{/if}
+	</div>
 </div>
 
 <style>
@@ -445,28 +449,42 @@ Assistant:
 		box-shadow: 0 0 30px rgba(6, 182, 212, 0.4);
 	}
 
-	/* 3D Tilt Effect for Discover Button */
+	/* Enhanced 3D Neomorphic Effect for Discover Button */
 	.discover-btn {
+		background: linear-gradient(145deg, var(--bg-secondary), var(--bg-primary));
+		background-image: linear-gradient(145deg, #06b6d4, #8b5cf6);
 		transform-style: preserve-3d;
 		perspective: 1000px;
-		transition: all 0.5s cubic-bezier(0.23, 1, 0.320, 1);
+		transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
 	}
 
-	.discover-btn:hover {
+	.discover-btn:not(:disabled):hover {
+		background: linear-gradient(145deg, var(--bg-primary), var(--bg-secondary));
+		background-image: linear-gradient(145deg, #0891b2, #7c3aed);
 		transform: scale(1.05) rotateX(-8deg) rotateY(5deg) rotateZ(-1deg);
 		box-shadow: 
+			8px 8px 16px var(--shadow-dark),
+			-8px -8px 16px var(--shadow-light),
 			0 20px 40px rgba(6, 182, 212, 0.3),
-			0 0 60px rgba(6, 182, 212, 0.2),
-			inset 0 2px 10px rgba(255, 255, 255, 0.1);
+			0 0 60px rgba(6, 182, 212, 0.2);
 	}
 
-	.discover-btn:active {
+	.discover-btn:not(:disabled):active {
+		background: linear-gradient(145deg, var(--bg-tertiary), var(--bg-primary));
+		background-image: linear-gradient(145deg, #0e7490, #6d28d9);
 		transform: scale(0.98) rotateX(-2deg) rotateY(1deg);
+		box-shadow: 
+			inset 4px 4px 8px var(--shadow-dark),
+			inset -4px -4px 8px var(--shadow-light);
 		transition: all 0.1s ease-out;
 	}
 
 	.discover-btn:disabled {
+		background: linear-gradient(145deg, #374151, #1f2937) !important;
+		background-image: none !important;
 		transform: none !important;
-		box-shadow: none !important;
+		box-shadow: 
+			inset 2px 2px 4px rgba(0, 0, 0, 0.3),
+			inset -2px -2px 4px rgba(55, 65, 81, 0.1) !important;
 	}
 </style>
