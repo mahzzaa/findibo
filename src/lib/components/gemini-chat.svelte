@@ -105,12 +105,13 @@ Author (respond with just the name, no extra text):`
 		loading = true;
 		book = description = author = genre = rating = ageRange = reason = isbn = '';
 
-		const res = await fetch('/api/gemini', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
+		try {
+			const res = await fetch('/api/gemini', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
 				prompt: `
 You are Findibo, a comprehensive international book recommendation assistant with knowledge of literature from ALL countries and languages. You can recommend books in English, Persian/Farsi, Turkish, Arabic, Spanish, French, German, Japanese, Korean, Chinese, Russian, and any other language worldwide.
 
@@ -151,23 +152,40 @@ Assistant:
 			})
 		});
 
-		const data = await res.json();
-		const result = data.result;
+			if (!res.ok) {
+				throw new Error(`HTTP error! status: ${res.status}`);
+			}
 
-		result.split('\n').forEach((line) => {
-			if (line.startsWith('• Book:')) book = line.replace('• Book: ', '').trim();
-			else if (line.startsWith('• Description:'))
-				description = line.replace('• Description: ', '').trim();
-			else if (line.startsWith('• Author:')) author = line.replace('• Author: ', '').trim();
-			else if (line.startsWith('• Country/Language:')) 
-				genre = line.replace('• Country/Language: ', '').trim(); // Using genre variable to store country/language
-			else if (line.startsWith('• Genre:')) 
-				genre = genre ? genre + ' | ' + line.replace('• Genre: ', '').trim() : line.replace('• Genre: ', '').trim();
-			else if (line.startsWith('• Rating:')) rating = line.replace('• Rating: ', '').trim();
-			else if (line.startsWith('• Age Range:')) ageRange = line.replace('• Age Range: ', '').trim();
-			else if (line.startsWith('• Reason:')) reason = line.replace('• Reason: ', '').trim();
-			else if (line.startsWith('• ISBN:')) isbn = line.replace('• ISBN: ', '').trim();
-		});
+			const data = await res.json();
+			const result = data.result;
+
+			result.split('\n').forEach((line) => {
+				if (line.startsWith('• Book:')) book = line.replace('• Book: ', '').trim();
+				else if (line.startsWith('• Description:'))
+					description = line.replace('• Description: ', '').trim();
+				else if (line.startsWith('• Author:')) author = line.replace('• Author: ', '').trim();
+				else if (line.startsWith('• Country/Language:')) 
+					genre = line.replace('• Country/Language: ', '').trim(); // Using genre variable to store country/language
+				else if (line.startsWith('• Genre:')) 
+					genre = genre ? genre + ' | ' + line.replace('• Genre: ', '').trim() : line.replace('• Genre: ', '').trim();
+				else if (line.startsWith('• Rating:')) rating = line.replace('• Rating: ', '').trim();
+				else if (line.startsWith('• Age Range:')) ageRange = line.replace('• Age Range: ', '').trim();
+				else if (line.startsWith('• Reason:')) reason = line.replace('• Reason: ', '').trim();
+				else if (line.startsWith('• ISBN:')) isbn = line.replace('• ISBN: ', '').trim();
+			});
+
+		} catch (error) {
+			console.error('Error fetching book recommendation:', error);
+			// Set error message for user
+			book = 'Error occurred';
+			description = 'Unable to fetch recommendation. Please try again later or check your API quota.';
+			author = '';
+			genre = '';
+			rating = '';
+			ageRange = '';
+			reason = error.message.includes('status: 429') ? 'API rate limit reached. Please try again later.' : 'An error occurred while fetching your recommendation.';
+			isbn = '';
+		}
 
 		loading = false;
 	}
